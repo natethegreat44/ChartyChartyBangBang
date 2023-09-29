@@ -7,4 +7,18 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'ChartyChartyBangBang';
+
+  public data1 = Array.from({length: 10}, (n, i) => {
+    return {
+      Date: new Date().setDate(new Date().getDate()) - i,
+      Close: Math.random() * 40
+    }
+  });
+
+  public data2 = Array.from({length: 10}, (n, i) => {
+    return {
+      Date: new Date().setDate(new Date().getDate()) - i,
+      Close: Math.random() * 40
+    }
+  });
 }
