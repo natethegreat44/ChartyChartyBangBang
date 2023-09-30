@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, ViewChild} from '@angular/core';
 import * as Plot from '@observablehq/plot';
 import * as d3 from 'd3';
 
@@ -13,6 +13,8 @@ export class ChartComponent implements AfterViewInit {
   @Input() name: string = 'Unnamed';
   @Input() data: DataPoint[] = [];
 
+  @ViewChild("chartychart") chartElement?: ElementRef;
+
   ngAfterViewInit() {
     this.drawPlot();
   }
@@ -22,7 +24,7 @@ export class ChartComponent implements AfterViewInit {
 
     const plot = Plot.plot({
       x: {
-        ticks: 10,
+        ticks: 5,
         label: null,
         labelArrow: 'none',
         tickFormat: (x) => dateFormatter(x)
@@ -61,18 +63,11 @@ export class ChartComponent implements AfterViewInit {
 
     // TODO: This very most likely isn't correct:
     //  - janky to remove & add this way
-    //  - probably needs to be using Renderer2 or ViewChild
-    //  - dynamic div name is still a code smell - one instance of this component shouldn't be able to get to and clobber another instance
-
-    const div = document.querySelector(`#${this.divName}`)!;
-    if (div.children.length > 0) {
-      div.children[0].remove();
+    //  - probably needs to be using Renderer2
+    if(this.chartElement?.nativeElement.children.length > 0) {
+      this.chartElement?.nativeElement.children[0].remove();
     }
-    div.append(plot);
-  }
-
-  get divName(): string {
-    return `div_${this.name}`;
+    this.chartElement?.nativeElement!.appendChild(plot);
   }
 
   addData(): void {
