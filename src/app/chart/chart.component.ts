@@ -1,10 +1,9 @@
 import {AfterViewInit, Component, ElementRef, Input, Renderer2, ViewChild} from '@angular/core';
 import * as Plot from '@observablehq/plot';
 import * as d3 from 'd3';
+import {DataPoint} from '../models/dataPoint';
 
-import {DataPoint} from "../models/dataPoint";
-
-export type PlotType = (SVGSVGElement & Plot.Plot) | (HTMLElement & Plot.Plot);
+type PlotType = (SVGSVGElement & Plot.Plot) | (HTMLElement & Plot.Plot);
 
 @Component({
   selector: 'app-chart',
@@ -15,7 +14,7 @@ export class ChartComponent implements AfterViewInit {
   @Input() name: string = 'Unnamed';
   @Input() data: DataPoint[] = [];
 
-  @ViewChild("chartychart") chartElement?: ElementRef;
+  @ViewChild('chartychart') chartElement?: ElementRef;
 
   private plot?: PlotType;
 
@@ -28,7 +27,7 @@ export class ChartComponent implements AfterViewInit {
   }
 
   private createPlot(): PlotType {
-    const dateFormatter = d3.timeFormat("%Y-%m-%d");
+    const dateFormatter = d3.timeFormat('%Y-%m-%d');
 
     const plot: PlotType = Plot.plot({
       x: {
@@ -43,19 +42,22 @@ export class ChartComponent implements AfterViewInit {
         labelArrow: 'none'
       },
       marks: [
-        Plot.lineY(this.data, {x: "date", y: "value"}),
-        Plot.ruleX(this.data, Plot.pointerX({x: "date", py: "value", stroke: "red"})),
-        Plot.dot(this.data, Plot.pointerX({x: "date", y: "value", stroke: "red"})),
+        Plot.lineY(this.data, {x: 'date', y: 'value'}),
+        Plot.ruleX(this.data, Plot.pointerX({x: 'date', py: 'value', stroke: 'red'})),
+        Plot.dot(this.data, Plot.pointerX({x: 'date', y: 'value', stroke: 'red'})),
         Plot.text(this.data, Plot.pointerX({
-          px: "date",
-          py: "value",
+          px: 'date',
+          py: 'value',
           dy: -17,
-          frameAnchor: "top-left",
-          fontVariant: "tabular-nums",
-          text: (d: DataPoint) => [`Date ${Plot.formatIsoDate(d.date)}`, `Value ${d.value.toFixed(2)}`].join("   ")
+          frameAnchor: 'top-left',
+          fontVariant: 'tabular-nums',
+          text: (d: DataPoint) => [`Date ${Plot.formatIsoDate(d.date)}`, `Value ${d.value.toFixed(2)}`].join('   ')
         })),
-        Plot.crosshair(this.data, {x: "date", y: "value"})
-      ]
+        Plot.crosshair(this.data, {x: 'date', y: 'value'})
+      ],
+      color: {
+        legend: true
+      }
     });
 
     d3.select(plot)
