@@ -94,8 +94,9 @@ export class ChartComponent implements AfterViewInit {
 
     // https://observablehq.com/@fil/plot-animate-a-bar-chart/2
 
+    const newPlot = this.createPlot();
     this.renderer.removeChild(this.chartElement?.nativeElement, this.plot);
-    this.plot = this.createPlot();
-    this.renderer.appendChild(this.chartElement?.nativeElement, this.plot);
+    this.renderer.appendChild(this.chartElement?.nativeElement, newPlot);
+    this.plot = newPlot;
   }
 }
