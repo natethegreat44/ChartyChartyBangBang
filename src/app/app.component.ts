@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
+import {DataPoint} from "./models/dataPoint";
 
 @Component({
   selector: 'app-root',
@@ -10,17 +11,18 @@ export class AppComponent {
 
   numberOfPoints = 10;
 
-  public data1 = Array.from({length: this.numberOfPoints}, (n, i) => {
+  public data1: DataPoint[] = Array.from({length: this.numberOfPoints}, (n, i) => {
     return {
-      Date: new Date(2023, 0, i),
-      Close: 25 + Math.random() * 40
+      date: new Date(2023, 0, i),
+      value: 25 + Math.random() * 40
     }
   });
 
-  public data2 = Array.from({length: this.numberOfPoints}, (n, i) => {
+  public data2: DataPoint[] = Array.from({length: this.numberOfPoints}, (n, i) => {
     return {
-      Date: new Date(2023, 0, i),
-      Close: 12 + Math.random() * 20
+      date: new Date(2023, 0, i),
+      value: 12 + Math.random() * 20
     }
   });
 }
+

@@ -2,6 +2,8 @@ import {AfterViewInit, Component, Input} from '@angular/core';
 import * as Plot from '@observablehq/plot';
 import * as d3 from 'd3';
 
+import {DataPoint} from "../models/dataPoint";
+
 @Component({
   selector: 'app-chart',
   templateUrl: './chart.component.html',
@@ -9,9 +11,7 @@ import * as d3 from 'd3';
 })
 export class ChartComponent implements AfterViewInit {
   @Input() name: string = 'Unnamed';
-  @Input() data: any; // lazy, lazy, lazy
-
-  thePlot?: (SVGSVGElement & Plot.Plot) | (HTMLElement & Plot.Plot);
+  @Input() data: DataPoint[] = [];
 
   ngAfterViewInit() {
     this.drawPlot();
@@ -33,18 +33,18 @@ export class ChartComponent implements AfterViewInit {
         labelArrow: 'none'
       },
       marks: [
-        Plot.lineY(this.data, {x: "Date", y: "Close"}),
-        Plot.ruleX(this.data, Plot.pointerX({x: "Date", py: "Close", stroke: "red"})),
-        Plot.dot(this.data, Plot.pointerX({x: "Date", y: "Close", stroke: "red"})),
+        Plot.lineY(this.data, {x: "date", y: "value"}),
+        Plot.ruleX(this.data, Plot.pointerX({x: "date", py: "value", stroke: "red"})),
+        Plot.dot(this.data, Plot.pointerX({x: "date", y: "value", stroke: "red"})),
         Plot.text(this.data, Plot.pointerX({
-          px: "Date",
-          py: "Close",
+          px: "date",
+          py: "value",
           dy: -17,
           frameAnchor: "top-left",
           fontVariant: "tabular-nums",
-          text: (d) => [`Date ${Plot.formatIsoDate(d.Date)}`, `Close ${d.Close.toFixed(2)}`].join("   ")
+          text: (d: DataPoint) => [`Date ${Plot.formatIsoDate(d.date)}`, `Value ${d.value.toFixed(2)}`].join("   ")
         })),
-        Plot.crosshair(this.data, {x: "Date", y: "Close"})
+        Plot.crosshair(this.data, {x: "date", y: "value"})
       ]
     });
 
@@ -52,22 +52,23 @@ export class ChartComponent implements AfterViewInit {
       .on('click', (d: PointerEvent, _) => {
         //https://stackoverflow.com/questions/33210447/how-to-plot-time-data-on-a-d3-js-line-graph
         const scale = d3.scaleTime()
-          .domain([this.data[0].Date, this.data[this.data.length - 1].Date])
+          .domain([this.data[0].date, this.data[this.data.length - 1].date])
           .range([0, plot.clientWidth]);
         const date = scale.invert(d.offsetX);
 
         window.alert(`You clicked on ${date}%`);
       });
 
-    const div = document.querySelector(`#${this.divName}`)!;
+    // TODO: This very most likely isn't correct:
+    //  - janky to remove & add this way
+    //  - probably needs to be using Renderer2 or ViewChild
+    //  - dynamic div name is still a code smell - one instance of this component shouldn't be able to get to and clobber another instance
 
+    const div = document.querySelector(`#${this.divName}`)!;
     if (div.children.length > 0) {
       div.children[0].remove();
     }
-
     div.append(plot);
-
-    this.thePlot = plot;
   }
 
   get divName(): string {
@@ -76,7 +77,7 @@ export class ChartComponent implements AfterViewInit {
 
   addData(): void {
     const numberOfPoints = 10;
-    const latestDate = this.data[this.data.length - 1].Date;
+    const latestDate = this.data[this.data.length - 1].date;
 
     const year = latestDate.getFullYear();
     const month = latestDate.getMonth();
@@ -86,16 +87,15 @@ export class ChartComponent implements AfterViewInit {
       const newDate = new Date(year, month, date + i);
 
       this.data.push({
-        Date: newDate,
-        Close: 25 + Math.random() * 40
+        date: newDate,
+        value: 25 + Math.random() * 40
       });
     }
 
+    // console.log(`Added data, length is now ${this.data.length}`);
+    // console.log(JSON.stringify(this.data));
+
     // https://observablehq.com/@fil/plot-animate-a-bar-chart/2
-
-    console.log(`Added data, length is now ${this.data.length}`);
-    console.log(JSON.stringify(this.data));
-
     this.drawPlot();
   }
 }
