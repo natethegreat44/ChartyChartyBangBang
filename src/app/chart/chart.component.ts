@@ -12,8 +12,6 @@ export class ChartComponent implements AfterViewInit {
   @Input() data: any; // lazy, lazy, lazy
 
   ngAfterViewInit() {
-    const line = Plot.lineY(this.data, {x: "Date", y: "Close",});
-
     const dateFormatter = d3.timeFormat("%Y-%m-%d");
 
     const plot = Plot.plot({
@@ -29,7 +27,11 @@ export class ChartComponent implements AfterViewInit {
         labelArrow: 'none'
       },
       marks: [
-        line
+        Plot.lineY(this.data, {x: "Date", y: "Close"}),
+        Plot.ruleX(this.data, Plot.pointerX({x: "Date", py: "Close", stroke: "red"})),
+        Plot.dot(this.data, Plot.pointerX({x: "Date", y: "Close", stroke: "red"})),
+        Plot.text(this.data, Plot.pointerX({px: "Date", py: "Close", dy: -17, frameAnchor: "top-left", fontVariant: "tabular-nums", text: (d) => [`Date ${Plot.formatIsoDate(d.Date)}`, `Close ${d.Close.toFixed(2)}`].join("   ")})),
+        Plot.crosshair(this.data, {x: "Date", y: "Close"})
       ],
     });
 
