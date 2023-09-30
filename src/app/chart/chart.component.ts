@@ -13,9 +13,11 @@ export class ChartComponent implements AfterViewInit {
   @Input() data: any; // lazy, lazy, lazy
 
   ngAfterViewInit() {
+    const line = Plot.lineY(this.data, {x: "Date", y: "Close",});
+
     const plot = Plot.plot({
       marks: [
-        Plot.lineY(this.data, {x: "Date", y: "Close",})
+        line
       ],
     });
 
@@ -27,13 +29,14 @@ export class ChartComponent implements AfterViewInit {
 
     // Works also, same problem
     d3.select(plot)
-      .on('click', (d, i) =>
+      .on('click', (d: PointerEvent, _) =>
       {
-        const scale = d3.scaleTime(this.data.map((d: any) => d.Date));
-        const x = d.offsetX;
-        const date = scale.invert(x);
+        const scale = d3.scaleLinear()
+          .domain([0, this.data.length - 1])
+          .range([0, plot.clientWidth]);
+        const percent = scale.invert(d.offsetX) * this.data.length;
 
-        window.alert(`You clicked on ${date}`);
+        window.alert(`You clicked on ${percent}%`);
       });
 
     const div = document.querySelector(`#${this.divName}`)!;
