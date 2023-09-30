@@ -8,17 +8,19 @@ import { Component } from '@angular/core';
 export class AppComponent {
   title = 'ChartyChartyBangBang';
 
-  public data1 = Array.from({length: 10}, (n, i) => {
+  numberOfPoints = 100;
+
+  public data1 = Array.from({length: this.numberOfPoints}, (n, i) => {
     return {
-      Date: new Date().setDate(new Date().getDate()) - 1000*60*60*24*i,
-      Close: Math.random() * 40
+      Date: new Date().setDate(new Date().getDate() - i),
+      Close: 25 + Math.random() * 40
     }
   }).reverse();
 
-  public data2 = Array.from({length: 10}, (n, i) => {
+  public data2 = Array.from({length: this.numberOfPoints}, (n, i) => {
     return {
-      Date: new Date().setDate(new Date().getDate()) - 1000*60*60*24*i,
-      Close: Math.random() * 40
+      Date: new Date().setDate(new Date().getDate() - i),
+      Close: 12 + Math.random() * 20
     }
   }).reverse();
 }

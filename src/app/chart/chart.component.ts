@@ -1,7 +1,6 @@
 import {AfterViewInit, Component, Input} from '@angular/core';
 import * as Plot from '@observablehq/plot';
 import * as d3 from 'd3';
-import {concatWith} from "rxjs";
 
 @Component({
   selector: 'app-chart',
@@ -15,19 +14,25 @@ export class ChartComponent implements AfterViewInit {
   ngAfterViewInit() {
     const line = Plot.lineY(this.data, {x: "Date", y: "Close",});
 
+    const dateFormatter = d3.timeFormat("%Y-%m-%d");
+
     const plot = Plot.plot({
+      x: {
+        ticks: 10,
+        label: null,
+        labelArrow: 'none',
+        tickFormat: (x) => dateFormatter(x)
+      },
+      y: {
+        grid: true,
+        label: null,
+        labelArrow: 'none'
+      },
       marks: [
         line
       ],
     });
 
-    // Works, but hard to get to the data
-    // plot.addEventListener('click', (e: Event) => {
-    //   const pe = <PointerEvent>e;
-    //   console.log(`click: ${pe.x}, ${pe.y}`);
-    // });
-
-    // Works also, same problem
     d3.select(plot)
       .on('click', (d: PointerEvent, _) =>
       {
