@@ -31,12 +31,13 @@ export class ChartComponent implements AfterViewInit {
     d3.select(plot)
       .on('click', (d: PointerEvent, _) =>
       {
-        const scale = d3.scaleLinear()
-          .domain([0, this.data.length - 1])
-          .range([0, plot.clientWidth]);
-        const percent = scale.invert(d.offsetX) * this.data.length;
+        //https://stackoverflow.com/questions/33210447/how-to-plot-time-data-on-a-d3-js-line-graph
+        const scale = d3.scaleTime()
+          .domain([this.data[0].Date, this.data[this.data.length-1].Date])
+          .range( [0, plot.clientWidth]);
+        const date = scale.invert(d.offsetX);
 
-        window.alert(`You clicked on ${percent}%`);
+        window.alert(`You clicked on ${date}%`);
       });
 
     const div = document.querySelector(`#${this.divName}`)!;
