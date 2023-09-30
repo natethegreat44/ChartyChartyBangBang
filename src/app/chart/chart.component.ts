@@ -78,8 +78,12 @@ export class ChartComponent implements AfterViewInit {
     const numberOfPoints = 10;
     const latestDate = this.data[this.data.length - 1].Date;
 
+    const year = latestDate.getFullYear();
+    const month = latestDate.getMonth();
+    const date = latestDate.getDate();
+
     for (let i = 0; i < numberOfPoints; i++) {
-      const newDate = new Date(new Date().setDate(new Date(latestDate).getDate() + i));
+      const newDate = new Date(year, month, date + i);
 
       this.data.push({
         Date: newDate,
@@ -92,8 +96,6 @@ export class ChartComponent implements AfterViewInit {
     console.log(`Added data, length is now ${this.data.length}`);
     console.log(JSON.stringify(this.data));
 
-    // this.thePlot.
-    // d3.select(this.thePlot).
     this.drawPlot();
   }
 }

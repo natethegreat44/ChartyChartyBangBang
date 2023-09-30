@@ -12,15 +12,15 @@ export class AppComponent {
 
   public data1 = Array.from({length: this.numberOfPoints}, (n, i) => {
     return {
-      Date: new Date().setDate(new Date().getDate() - 1000 - i),
+      Date: new Date(2023, 0, i),
       Close: 25 + Math.random() * 40
     }
-  }).reverse();
+  });
 
   public data2 = Array.from({length: this.numberOfPoints}, (n, i) => {
     return {
-      Date: new Date().setDate(new Date().getDate() - 1000 - i),
+      Date: new Date(2023, 0, i),
       Close: 12 + Math.random() * 20
     }
-  }).reverse();
+  });
 }
