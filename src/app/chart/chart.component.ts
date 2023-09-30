@@ -1,8 +1,10 @@
-import {AfterViewInit, Component, ElementRef, Input, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, Renderer2, ViewChild} from '@angular/core';
 import * as Plot from '@observablehq/plot';
 import * as d3 from 'd3';
 
 import {DataPoint} from "../models/dataPoint";
+
+export type PlotType = (SVGSVGElement & Plot.Plot) | (HTMLElement & Plot.Plot);
 
 @Component({
   selector: 'app-chart',
@@ -15,14 +17,20 @@ export class ChartComponent implements AfterViewInit {
 
   @ViewChild("chartychart") chartElement?: ElementRef;
 
-  ngAfterViewInit() {
-    this.drawPlot();
+  private plot?: PlotType;
+
+  constructor(private renderer: Renderer2) {
   }
 
-  private drawPlot() {
+  ngAfterViewInit() {
+    this.plot = this.createPlot();
+    this.renderer.appendChild(this.chartElement?.nativeElement, this.plot);
+  }
+
+  private createPlot(): PlotType {
     const dateFormatter = d3.timeFormat("%Y-%m-%d");
 
-    const plot = Plot.plot({
+    const plot: PlotType = Plot.plot({
       x: {
         ticks: 5,
         label: null,
@@ -61,13 +69,7 @@ export class ChartComponent implements AfterViewInit {
         window.alert(`You clicked on ${date}%`);
       });
 
-    // TODO: This very most likely isn't correct:
-    //  - janky to remove & add this way
-    //  - probably needs to be using Renderer2
-    if(this.chartElement?.nativeElement.children.length > 0) {
-      this.chartElement?.nativeElement.children[0].remove();
-    }
-    this.chartElement?.nativeElement!.appendChild(plot);
+    return plot;
   }
 
   addData(): void {
@@ -91,6 +93,9 @@ export class ChartComponent implements AfterViewInit {
     // console.log(JSON.stringify(this.data));
 
     // https://observablehq.com/@fil/plot-animate-a-bar-chart/2
-    this.drawPlot();
+
+    this.renderer.removeChild(this.chartElement?.nativeElement, this.plot);
+    this.plot = this.createPlot();
+    this.renderer.appendChild(this.chartElement?.nativeElement, this.plot);
   }
 }
