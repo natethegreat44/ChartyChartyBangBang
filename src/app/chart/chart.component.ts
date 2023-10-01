@@ -62,13 +62,8 @@ export class ChartComponent implements AfterViewInit {
 
     d3.select(plot)
       .on('click', (d: PointerEvent, _) => {
-        //https://stackoverflow.com/questions/33210447/how-to-plot-time-data-on-a-d3-js-line-graph
-        const scale = d3.scaleTime()
-          .domain([this.data[0].date, this.data[this.data.length - 1].date])
-          .range([0, plot.clientWidth]);
-        const date = scale.invert(d.offsetX);
-
-        window.alert(`You clicked on ${date}%`);
+        const value: DataPoint = plot.value;
+        window.alert(`You clicked on ${value.date}%: ${value.value}`);
       });
 
     return plot;
