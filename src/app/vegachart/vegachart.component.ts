@@ -28,23 +28,30 @@ export interface VisOptions {
 export class VegachartComponent implements AfterViewInit {
   @ViewChild('vegachart') graph?: ElementRef;
 
-  async ngAfterViewInit() {
-    const values: Point2D[][] = range(1202).map(x => [{x, y: x + random(50)}, {x, y: x + random(50)}]);
-    const series: string[] = ['thing1', 'thing2'];
+  private data =
+    [
+      {"x": 0, "y": 28, "c": 0}, {"x": 0, "y": 20, "c": 1},
+      {"x": 1, "y": 43, "c": 0}, {"x": 1, "y": 35, "c": 1},
+      {"x": 2, "y": 81, "c": 0}, {"x": 2, "y": 10, "c": 1},
+      {"x": 3, "y": 19, "c": 0}, {"x": 3, "y": 15, "c": 1},
+      {"x": 4, "y": 52, "c": 0}, {"x": 4, "y": 48, "c": 1},
+      {"x": 5, "y": 24, "c": 0}, {"x": 5, "y": 28, "c": 1},
+      {"x": 6, "y": 87, "c": 0}, {"x": 6, "y": 66, "c": 1},
+      {"x": 7, "y": 17, "c": 0}, {"x": 7, "y": 27, "c": 1},
+      {"x": 8, "y": 68, "c": 0}, {"x": 8, "y": 16, "c": 1},
+      {"x": 9, "y": 49, "c": 0}, {"x": 9, "y": 25, "c": 1}
+    ];
 
-    await this.lineChart(this.graph?.nativeElement, {values, series});
+  async ngAfterViewInit() {
+    await this.lineChart(this.graph?.nativeElement);
   }
 
-  private async lineChart(
-    container: HTMLElement,
-    data: { values: Point2D[][], series: string[] },
-    opts: VisOptions = {},
-  ): Promise<void> {
+  private async lineChart(container: HTMLElement): Promise<void> {
     const spec: VisualizationSpec = {
       "$schema": "https://vega.github.io/schema/vega/v5.json",
       "description": "A basic line chart example.",
-      "width": 500,
-      "height": 200,
+      "width": 600,
+      "height": 500,
       "padding": 5,
 
       "signals": [
@@ -71,18 +78,7 @@ export class VegachartComponent implements AfterViewInit {
       "data": [
         {
           "name": "table",
-          "values": [
-            {"x": 0, "y": 28, "c": 0}, {"x": 0, "y": 20, "c": 1},
-            {"x": 1, "y": 43, "c": 0}, {"x": 1, "y": 35, "c": 1},
-            {"x": 2, "y": 81, "c": 0}, {"x": 2, "y": 10, "c": 1},
-            {"x": 3, "y": 19, "c": 0}, {"x": 3, "y": 15, "c": 1},
-            {"x": 4, "y": 52, "c": 0}, {"x": 4, "y": 48, "c": 1},
-            {"x": 5, "y": 24, "c": 0}, {"x": 5, "y": 28, "c": 1},
-            {"x": 6, "y": 87, "c": 0}, {"x": 6, "y": 66, "c": 1},
-            {"x": 7, "y": 17, "c": 0}, {"x": 7, "y": 27, "c": 1},
-            {"x": 8, "y": 68, "c": 0}, {"x": 8, "y": 16, "c": 1},
-            {"x": 9, "y": 49, "c": 0}, {"x": 9, "y": 25, "c": 1}
-          ]
+          "values": this.data
         }
       ],
 
@@ -149,7 +145,6 @@ export class VegachartComponent implements AfterViewInit {
       ]
     };
 
-
     const embedOpts = {
       actions: false,
       mode: 'vega-lite' as Mode,
@@ -157,6 +152,14 @@ export class VegachartComponent implements AfterViewInit {
     };
 
     await embed(container, spec, embedOpts);
+  }
+
+  i = 10;
+  addData() {
+    this.data.push({"x": this.i, "y": 49, "c": 0}, {"x": this.i, "y": 25, "c": 1});
+    this.i++;
+
+    console.log(JSON.stringify(this.data));
   }
 
 }
